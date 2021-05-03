@@ -4,132 +4,144 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  TextEditingController _userController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  bool _securePassword = true;
-  String _name = "", _passwordError, _userError;
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'TextField',
+      title: 'Text Form Field',
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('TextField'),
+          appBar: AppBar(
+            title: Text('Text Form Field'),
+          ),
+          body: MyForm()),
+    );
+  }
+}
+
+class MyForm extends StatefulWidget {
+  @override
+  _MyFormState createState() => _MyFormState();
+}
+
+class _MyFormState extends State<MyForm> {
+  final _formKey = GlobalKey<FormState>();
+  bool _securePass = true;
+  String _name = '';
+  bool _button = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Image.asset('assets/images/undraw_secure_login_pdn4.png'),
+        SizedBox(height: 5),
+        Text(
+          'Welcome',
+          textScaleFactor: 2.0,
+          style: TextStyle(color: Colors.blue),
         ),
-        body: Column(
-          children: [
-            Image.asset('assets/images/undraw_secure_login_pdn4.png'),
-            SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Text(
-                      'Welcome',
-                      style: TextStyle(color: Colors.blue),
-                      textScaleFactor: 2.0,
-                    ),
-                    Text(_name),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8, left: 8),
-                      child: TextField(
-                        maxLength: 50,
-                        controller: _userController,
-                        onChanged: (name) {
-                          setState(() {});
-                          _name = name;
-                        },
-                        decoration: InputDecoration(
-                            errorText: _userError,
-                            prefixIcon: Icon(Icons.email),
-                            border: OutlineInputBorder(),
-                            labelText: 'Name',
-                            hintText: 'Enter the User Name or Email'),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8, right: 8),
-                      child: TextField(
-                        controller: _passwordController,
-                        maxLength: 20,
-                        obscureText: _securePassword,
-                        decoration: InputDecoration(
-                            errorText: _passwordError,
-                            prefixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {});
-                                  _securePassword = !_securePassword;
-                                },
-                                icon: Icon(_securePassword
-                                    ? Icons.remove_red_eye
-                                    : Icons.security_rounded)),
-                            border: OutlineInputBorder(),
-                            labelText: 'Password',
-                            hintText: 'Enter the User Password'),
-                      ),
-                    ),
-                    Builder(
-                      builder: (BuildContext context) => MaterialButton(
-                        onPressed: () {
-                          validation(context);
-                        },
-                        color: Colors.blue,
-                        child: Text('login'),
-                      ),
-                    )
-                  ],
+        SizedBox(height: 5),
+        Text('$_name'),
+        SizedBox(height: 5),
+        Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+                child: TextFormField(
+                  validator: (error) {
+                    if (error.isEmpty)
+                      return 'Field can not be Empty';
+                    else if (!error.endsWith('.com'))
+                      return 'Incorrect Email Pathern';
+                    else
+                      return null;
+                  },
+                  onChanged: (name) {
+                    setState(() {
+                      _name = name;
+                    });
+                  },
+                  maxLength: 50,
+                  decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.email),
+                      border: OutlineInputBorder(),
+                      labelText: 'User name',
+                      hintText: 'Enter the User name or Email'),
                 ),
               ),
-            )
-          ],
-        ),
-      ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8, right: 8),
+                child: TextFormField(
+                  validator: (error) {
+                    if (error.isEmpty)
+                      return 'Field can not be Empty';
+                    else if (error.length <= 5)
+                      return 'Length must be greater then five';
+                    else
+                      return null;
+                  },
+                  maxLength: 30,
+                  obscureText: _securePass,
+                  decoration: InputDecoration(
+                      prefixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _securePass = !_securePass;
+                            });
+                          },
+                          icon: Icon(_securePass
+                              ? Icons.remove_red_eye
+                              : Icons.security_rounded)),
+                      border: OutlineInputBorder(),
+                      labelText: 'Password',
+                      hintText: 'Enter the Password'),
+                ),
+              ),
+              SizedBox(height: 5),
+              Material(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(50),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(50),
+                  splashColor: Colors.indigo,
+                  onTap: () {
+                    validation();
+                  },
+                  child: AnimatedContainer(
+                    alignment: Alignment.center,
+                    height: 50,
+                    width: _button ? 150 : 50,
+                    duration: Duration(seconds: 1),
+                    child: _button ? Text('Login') : Icon(Icons.done),
+                  ),
+                ),
+              )
+            ],
+          ),
+        )
+      ],
     );
   }
 
-  void validation(BuildContext context) {
-    setState(() {});
-    if (_passwordController.text.isEmpty) {
-      _passwordError = "Field can not be Empty";
-    } else if (_passwordController.text.length <= 5) {
-      _passwordError = "Length must be greater than 5";
-    } else {
-      _passwordError = null;
+  void validation() async {
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        _button = !_button;
+      });
+      await Future.delayed(Duration(seconds: 1));
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+                title: Text('Alert!!'),
+                content: Text('Successfully Logged in'),
+              ));
+      _formKey.currentState.reset();
+      setState(() {
+        _button = true;
+      });
     }
-    if (_userController.text.isEmpty) {
-      _userError = "Field Can not be Empty";
-    } else if (!_userController.text.endsWith(".com")) {
-      _userError = "Wrong User Email Pathern";
-    } else {
-      _userError = null;
-    }
-    if (_userError == null && _passwordError == null) {
-      alertDialog(context);
-    }
-  }
-
-  void alertDialog(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text('Alert!!!'),
-              content: Text('User successfully Logged in'),
-            ));
   }
 }
