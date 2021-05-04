@@ -88,6 +88,8 @@ class _MyAppState extends State<MyApp> {
                       builder: (BuildContext context) => MaterialButton(
                         onPressed: () {
                           validation(context);
+                          _passwordController.clear();
+                          _userController.clear();
                         },
                         color: Colors.blue,
                         child: Text('login'),
@@ -114,7 +116,7 @@ class _MyAppState extends State<MyApp> {
     }
     if (_userController.text.isEmpty) {
       _userError = "Field Can not be Empty";
-    } else if (!_userController.text.endsWith(".com")) {
+    } else if (!_userController.text.endsWith("mail.com")) {
       _userError = "Wrong User Email Pathern";
     } else {
       _userError = null;
