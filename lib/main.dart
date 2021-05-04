@@ -116,7 +116,8 @@ class _MyAppState extends State<MyApp> {
     }
     if (_userController.text.isEmpty) {
       _userError = "Field Can not be Empty";
-    } else if (!_userController.text.endsWith("mail.com")) {
+    } else if (!(_userController.text.endsWith("mail.com") &&
+        _userController.text.contains('@'))) {
       _userError = "Wrong User Email Pathern";
     } else {
       _userError = null;
