@@ -54,9 +54,8 @@ class _MyFormState extends State<MyForm> {
                   validator: (error) {
                     if (error.isEmpty)
                       return 'Field can not be Empty';
-                    else if (
-                        // !error.endsWith('mail.com') &&
-                        !error.contains('@'))
+                    else if (!(error.contains('@') &&
+                        error.endsWith('mail.com')))
                       return 'Incorrect Email Pathern';
                     else
                       return null;
